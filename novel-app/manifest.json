@@ -1,0 +1,23 @@
+{
+  "name": "novel-app",
+  "appid": "",
+  "description": "小说阅读平台小程序",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "app-plus": {
+    "usingComponents": true
+  },
+  "mp-weixin": {
+    "appid": "your-wechat-appid",
+    "setting": {
+      "urlCheck": false
+    },
+    "usingComponents": true
+  },
+  "h5": {
+    "devServer": {
+      "port": 8080
+    }
+  }
+}

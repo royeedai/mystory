@@ -1,0 +1,61 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "小说列表"
+      }
+    },
+    {
+      "path": "pages/novel-detail/novel-detail",
+      "style": {
+        "navigationBarTitleText": "小说详情"
+      }
+    },
+    {
+      "path": "pages/chapter-list/chapter-list",
+      "style": {
+        "navigationBarTitleText": "章节列表"
+      }
+    },
+    {
+      "path": "pages/reader/reader",
+      "style": {
+        "navigationBarTitleText": "阅读",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/my/my",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "小说阅读平台",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#3cc51f",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/home.png",
+        "selectedIconPath": "static/home-active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "iconPath": "static/my.png",
+        "selectedIconPath": "static/my-active.png",
+        "text": "我的"
+      }
+    ]
+  }
+}

@@ -83,14 +83,14 @@ public class ChapterService {
      * 创建章节
      */
     @Transactional
-    public ChapterVO createChapter(ChapterDTO chapterDTO, Long authorId) {
-        // 检查小说是否存在且属于当前作者
+    public ChapterVO createChapter(ChapterDTO chapterDTO, Long authorId, String role) {
+        // 检查小说是否存在且属于当前作者（管理员除外）
         Novel novel = novelMapper.selectById(chapterDTO.getNovelId());
         if (novel == null) {
             throw new RuntimeException("小说不存在");
         }
         
-        if (!novel.getAuthorId().equals(authorId)) {
+        if (!"ADMIN".equals(role) && !novel.getAuthorId().equals(authorId)) {
             throw new RuntimeException("无权在此小说下添加章节");
         }
         
@@ -107,7 +107,9 @@ public class ChapterService {
         
         Chapter chapter = new Chapter();
         BeanUtils.copyProperties(chapterDTO, chapter);
-        chapter.setWordCount(chapterDTO.getContent().length());
+        // 计算纯文本字数（去除HTML标签）
+        String textContent = chapterDTO.getContent().replaceAll("<[^>]*>", "");
+        chapter.setWordCount(textContent.length());
         
         chapterMapper.insert(chapter);
         
@@ -120,22 +122,42 @@ public class ChapterService {
      * 更新章节
      */
     @Transactional
-    public ChapterVO updateChapter(Long id, ChapterDTO chapterDTO, Long authorId) {
+    public ChapterVO updateChapter(Long id, ChapterDTO chapterDTO, Long authorId, String role) {
         Chapter chapter = chapterMapper.selectById(id);
         if (chapter == null) {
             throw new RuntimeException("章节不存在");
         }
         
-        // 检查小说是否属于当前作者
+        // 检查小说是否属于当前作者（管理员除外）
         Novel novel = novelMapper.selectById(chapter.getNovelId());
-        if (novel == null || !novel.getAuthorId().equals(authorId)) {
+        if (novel == null) {
+            throw new RuntimeException("小说不存在");
+        }
+        
+        if (!"ADMIN".equals(role) && !novel.getAuthorId().equals(authorId)) {
             throw new RuntimeException("无权编辑此章节");
         }
         
         BeanUtils.copyProperties(chapterDTO, chapter, "id", "novelId");
-        chapter.setWordCount(chapterDTO.getContent().length());
+        // 计算纯文本字数（去除HTML标签）
+        String textContent = chapterDTO.getContent().replaceAll("<[^>]*>", "");
+        chapter.setWordCount(textContent.length());
         
         chapterMapper.updateById(chapter);
+        
+        ChapterVO vo = new ChapterVO();
+        BeanUtils.copyProperties(chapter, vo);
+        return vo;
+    }
+    
+    /**
+     * 获取章节详情
+     */
+    public ChapterVO getChapterById(Long id) {
+        Chapter chapter = chapterMapper.selectById(id);
+        if (chapter == null) {
+            throw new RuntimeException("章节不存在");
+        }
         
         ChapterVO vo = new ChapterVO();
         BeanUtils.copyProperties(chapter, vo);
@@ -146,14 +168,18 @@ public class ChapterService {
      * 删除章节
      */
     @Transactional
-    public void deleteChapter(Long id, Long authorId) {
+    public void deleteChapter(Long id, Long authorId, String role) {
         Chapter chapter = chapterMapper.selectById(id);
         if (chapter == null) {
             throw new RuntimeException("章节不存在");
         }
         
         Novel novel = novelMapper.selectById(chapter.getNovelId());
-        if (novel == null || !novel.getAuthorId().equals(authorId)) {
+        if (novel == null) {
+            throw new RuntimeException("小说不存在");
+        }
+        
+        if (!"ADMIN".equals(role) && !novel.getAuthorId().equals(authorId)) {
             throw new RuntimeException("无权删除此章节");
         }
         

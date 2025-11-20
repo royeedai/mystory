@@ -6,10 +6,26 @@ const request = (options) => {
   return new Promise((resolve, reject) => {
     const token = uni.getStorageSync('token')
     
+    // 处理GET请求的params参数
+    let url = BASE_URL + options.url
+    let data = options.data || {}
+    
+    if (options.method === 'GET' && options.params) {
+      // 将params拼接到URL上
+      const params = options.params
+      const queryString = Object.keys(params)
+        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+        .join('&')
+      if (queryString) {
+        url += (url.includes('?') ? '&' : '?') + queryString
+      }
+      data = {}
+    }
+    
     uni.request({
-      url: BASE_URL + options.url,
+      url: url,
       method: options.method || 'GET',
-      data: options.data || {},
+      data: data,
       header: {
         'Content-Type': 'application/json',
         'Authorization': token ? `Bearer ${token}` : ''
@@ -53,7 +69,12 @@ const request = (options) => {
 }
 
 export default {
-  get: (url, data) => request({ url, method: 'GET', data }),
+  get: (url, options = {}) => {
+    if (options.params) {
+      return request({ url, method: 'GET', params: options.params })
+    }
+    return request({ url, method: 'GET', data: options })
+  },
   post: (url, data) => request({ url, method: 'POST', data }),
   put: (url, data) => request({ url, method: 'PUT', data }),
   delete: (url, data) => request({ url, method: 'DELETE', data })

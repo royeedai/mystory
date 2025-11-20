@@ -39,6 +39,12 @@ const routes = [
         meta: { title: '章节管理', roles: ['ADMIN', 'AUTHOR'] }
       },
       {
+        path: 'chapter/edit/:novelId/:id?',
+        name: 'ChapterEdit',
+        component: () => import('../views/novel/ChapterEdit.vue'),
+        meta: { title: '编辑章节', roles: ['ADMIN', 'AUTHOR'] }
+      },
+      {
         path: 'audit',
         name: 'AuditList',
         component: () => import('../views/audit/AuditList.vue'),

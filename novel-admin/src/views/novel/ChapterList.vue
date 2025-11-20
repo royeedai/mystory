@@ -22,39 +22,47 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { chapterApi } from '../../api'
 
 const route = useRoute()
-const novelId = route.params.id
+const router = useRouter()
+const novelId = parseInt(route.params.id)
 
 const loading = ref(false)
 const tableData = ref([])
 
 const loadData = async () => {
-  // TODO: 实现章节列表加载
-  tableData.value = []
+  loading.value = true
+  try {
+    const res = await chapterApi.getList(novelId)
+    tableData.value = res.data || []
+  } catch (error) {
+    ElMessage.error(error.message || '加载失败')
+  } finally {
+    loading.value = false
+  }
 }
 
 const handleCreate = () => {
-  // TODO: 实现新增章节
-  ElMessage.info('功能开发中')
+  router.push(`/chapter/edit/${novelId}`)
 }
 
 const handleEdit = (row) => {
-  // TODO: 实现编辑章节
-  ElMessage.info('功能开发中')
+  router.push(`/chapter/edit/${novelId}/${row.id}`)
 }
 
 const handleDelete = async (row) => {
-  await ElMessageBox.confirm('确定要删除吗？', '提示', { type: 'warning' })
   try {
+    await ElMessageBox.confirm('确定要删除吗？', '提示', { type: 'warning' })
     await chapterApi.delete(row.id)
     ElMessage.success('删除成功')
     loadData()
   } catch (error) {
-    ElMessage.error(error.message || '删除失败')
+    if (error !== 'cancel') {
+      ElMessage.error(error.message || '删除失败')
+    }
   }
 }
 

@@ -39,6 +39,11 @@ jwt:
   expiration: 86400000  # 24小时（后台用户）
   app-expiration: 604800000  # 7天（小程序用户）
 
+# 微信小程序配置
+wx:
+  appid: ${WX_APPID:}  # 微信小程序AppID，从环境变量读取
+  secret: ${WX_SECRET:}  # 微信小程序Secret，从环境变量读取
+
 server:
   port: 8080
   servlet:

@@ -3,6 +3,7 @@ package com.novel.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.novel.common.JwtUtil;
 import com.novel.common.UserDetails;
+import com.novel.common.WxApiUtil;
 import com.novel.dto.LoginDTO;
 import com.novel.dto.WxLoginDTO;
 import com.novel.entity.AppUser;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -21,6 +24,7 @@ public class AuthService {
     private final SysUserMapper sysUserMapper;
     private final AppUserMapper appUserMapper;
     private final JwtUtil jwtUtil;
+    private final WxApiUtil wxApiUtil;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
     /**
@@ -54,13 +58,17 @@ public class AuthService {
     
     /**
      * 小程序微信登录
-     * 注意：这里简化处理，实际应该调用微信API获取openid
      */
     public LoginVO wxLogin(WxLoginDTO wxLoginDTO) {
-        // TODO: 实际应该调用微信API: https://api.weixin.qq.com/sns/jscode2session
-        // 这里简化处理，使用code作为openid（仅用于测试）
-        String openid = wxLoginDTO.getCode(); // 实际应该从微信API获取
+        // 调用微信API获取openid
+        Map<String, String> wxResult = wxApiUtil.code2Session(wxLoginDTO.getCode());
+        String openid = wxResult.get("openid");
         
+        if (openid == null || openid.isEmpty()) {
+            throw new RuntimeException("获取微信用户信息失败");
+        }
+        
+        // 查询或创建用户
         AppUser appUser = appUserMapper.selectOne(
             new LambdaQueryWrapper<AppUser>()
                 .eq(AppUser::getOpenid, openid)
@@ -70,7 +78,7 @@ public class AuthService {
             // 新用户，自动注册
             appUser = new AppUser();
             appUser.setOpenid(openid);
-            appUser.setNickname("微信用户");
+            appUser.setNickname("微信用户" + openid.substring(0, 6));
             appUser.setTrialViewTime(0);
             appUser.setIsTrialEnabled(1);
             appUserMapper.insert(appUser);

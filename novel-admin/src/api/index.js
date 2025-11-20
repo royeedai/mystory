@@ -17,6 +17,8 @@ export const novelApi = {
 
 // 章节相关
 export const chapterApi = {
+  getList: (novelId) => request.get(`/admin/chapter/novel/${novelId}`),
+  getDetail: (id) => request.get(`/admin/chapter/${id}`),
   create: (novelId, data) => request.post(`/admin/chapter/novel/${novelId}`, data),
   update: (id, data) => request.put(`/admin/chapter/${id}`, data),
   delete: (id) => request.delete(`/admin/chapter/${id}`)

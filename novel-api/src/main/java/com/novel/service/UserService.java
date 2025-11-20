@@ -124,8 +124,24 @@ public class UserService {
      * 从Redis获取试看时间
      */
     private Integer getTrialTimeFromRedis(Long userId) {
-        Object value = redisTemplate.opsForValue().get(TRIAL_TIME_KEY + userId);
-        return value != null ? Integer.parseInt(value.toString()) : null;
+        try {
+            Object value = redisTemplate.opsForValue().get(TRIAL_TIME_KEY + userId);
+            if (value == null) {
+                return null;
+            }
+            // 处理不同的数据类型
+            if (value instanceof Integer) {
+                return (Integer) value;
+            } else if (value instanceof Number) {
+                return ((Number) value).intValue();
+            } else {
+                // 尝试解析字符串
+                return Integer.parseInt(value.toString());
+            }
+        } catch (Exception e) {
+            // Redis异常时返回null，使用数据库值
+            return null;
+        }
     }
     
     /**

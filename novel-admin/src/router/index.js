@@ -55,7 +55,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL), // 使用Vite的BASE_URL，自动适配/admin/路径
   routes
 })
 

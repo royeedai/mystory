@@ -32,6 +32,16 @@ public class WxApiUtil {
      * @return Map包含openid和session_key
      */
     public Map<String, String> code2Session(String code) {
+        // 检查配置是否完整
+        if (appid == null || appid.isEmpty() || secret == null || secret.isEmpty()) {
+            log.error("微信小程序配置不完整: appid={}, secret={}", appid, secret != null && !secret.isEmpty() ? "已配置" : "未配置");
+            throw new RuntimeException("微信小程序配置不完整，请联系管理员");
+        }
+        
+        if (code == null || code.isEmpty()) {
+            throw new RuntimeException("微信登录code不能为空");
+        }
+        
         String url = String.format(
             "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",
             appid, secret, code

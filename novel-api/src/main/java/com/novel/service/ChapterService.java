@@ -57,7 +57,14 @@ public class ChapterService {
         }
         
         String content = chapter.getContent();
-        int totalPages = (int) Math.ceil((double) content.length() / PAGE_SIZE);
+        if (content == null || content.isEmpty()) {
+            throw new RuntimeException("章节内容为空");
+        }
+        
+        // 去除HTML标签后计算纯文本长度用于分页
+        String textContent = content.replaceAll("<[^>]*>", "");
+        int textLength = textContent.length();
+        int totalPages = textLength > 0 ? (int) Math.ceil((double) textLength / PAGE_SIZE) : 1;
         
         if (page == null || page < 1) {
             page = 1;
@@ -66,9 +73,10 @@ public class ChapterService {
             page = totalPages;
         }
         
+        // 对纯文本内容进行分页（前端显示时不需要HTML标签）
         int start = (page - 1) * PAGE_SIZE;
-        int end = Math.min(start + PAGE_SIZE, content.length());
-        String pageContent = content.substring(start, end);
+        int end = Math.min(start + PAGE_SIZE, textLength);
+        String pageContent = textLength > 0 ? textContent.substring(start, end) : "";
         
         ChapterVO vo = new ChapterVO();
         BeanUtils.copyProperties(chapter, vo);
@@ -108,7 +116,11 @@ public class ChapterService {
         Chapter chapter = new Chapter();
         BeanUtils.copyProperties(chapterDTO, chapter);
         // 计算纯文本字数（去除HTML标签）
-        String textContent = chapterDTO.getContent().replaceAll("<[^>]*>", "");
+        String content = chapterDTO.getContent();
+        if (content == null) {
+            content = "";
+        }
+        String textContent = content.replaceAll("<[^>]*>", "");
         chapter.setWordCount(textContent.length());
         
         chapterMapper.insert(chapter);
@@ -140,7 +152,11 @@ public class ChapterService {
         
         BeanUtils.copyProperties(chapterDTO, chapter, "id", "novelId");
         // 计算纯文本字数（去除HTML标签）
-        String textContent = chapterDTO.getContent().replaceAll("<[^>]*>", "");
+        String content = chapterDTO.getContent();
+        if (content == null) {
+            content = "";
+        }
+        String textContent = content.replaceAll("<[^>]*>", "");
         chapter.setWordCount(textContent.length());
         
         chapterMapper.updateById(chapter);

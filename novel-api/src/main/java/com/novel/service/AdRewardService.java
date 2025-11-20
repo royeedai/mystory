@@ -38,14 +38,18 @@ public class AdRewardService {
         adWatchRecordMapper.insert(record);
         
         // 增加试看时间
-        Integer currentTime = userService.getUserInfo(userId).getTrialViewTime();
+        AppUser user = appUserMapper.selectById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        
+        Integer currentTime = user.getTrialViewTime() != null ? user.getTrialViewTime() : 0;
         Integer newTime = currentTime + REWARD_TIME;
         
         // 更新Redis
         redisTemplate.opsForValue().set(TRIAL_TIME_KEY + userId, newTime, 7, TimeUnit.DAYS);
         
         // 更新数据库
-        AppUser user = appUserMapper.selectById(userId);
         user.setTrialViewTime(newTime);
         appUserMapper.updateById(user);
         

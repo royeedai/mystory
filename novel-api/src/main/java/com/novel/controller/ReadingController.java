@@ -49,12 +49,29 @@ public class ReadingController {
                 return Result.error(401, "未登录");
             }
             
+            // 参数验证
+            if (params == null || params.isEmpty()) {
+                return Result.error("参数不能为空");
+            }
+            
+            if (params.get("novelId") == null) {
+                return Result.error("novelId参数不能为空");
+            }
+            if (params.get("chapterId") == null) {
+                return Result.error("chapterId参数不能为空");
+            }
+            if (params.get("pageIndex") == null) {
+                return Result.error("pageIndex参数不能为空");
+            }
+            
             Long novelId = Long.parseLong(params.get("novelId").toString());
             Long chapterId = Long.parseLong(params.get("chapterId").toString());
             Integer pageIndex = Integer.parseInt(params.get("pageIndex").toString());
             
             readingService.saveReadingRecord(userId, novelId, chapterId, pageIndex);
             return Result.success();
+        } catch (NumberFormatException e) {
+            return Result.error("参数格式错误: " + e.getMessage());
         } catch (Exception e) {
             return Result.error(e.getMessage());
         }

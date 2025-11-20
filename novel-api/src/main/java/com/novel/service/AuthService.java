@@ -78,7 +78,9 @@ public class AuthService {
             // 新用户，自动注册
             appUser = new AppUser();
             appUser.setOpenid(openid);
-            appUser.setNickname("微信用户" + openid.substring(0, 6));
+            // 安全处理openid长度，避免substring越界
+            String nicknameSuffix = openid.length() >= 6 ? openid.substring(0, 6) : openid;
+            appUser.setNickname("微信用户" + nicknameSuffix);
             appUser.setTrialViewTime(0);
             appUser.setIsTrialEnabled(1);
             appUserMapper.insert(appUser);

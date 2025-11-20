@@ -1,4 +1,6 @@
-const BASE_URL = 'http://localhost:8080/api'
+// 使用相对路径，自动使用当前域名
+// 如果部署在同一域名下，会自动请求当前域名的/api接口
+const BASE_URL = '/api'
 
 const request = (options) => {
   return new Promise((resolve, reject) => {

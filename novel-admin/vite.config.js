@@ -4,6 +4,7 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  base: '/admin/',  // 设置基础路径为/admin
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src')
@@ -15,6 +16,16 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true
+      }
+    }
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    // 确保构建后的资源路径正确
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
       }
     }
   }

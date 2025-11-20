@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails as SpringUserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +12,7 @@ import java.util.Collections;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDetails implements SpringUserDetails {
+public class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
     private Long userId;
     private String username;
     private String password;

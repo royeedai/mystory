@@ -6,7 +6,7 @@
         <text class="icon">‹</text>
       </view>
       <view class="header-center">
-        <text class="chapter-title">{{ chapterTitle }}</text>
+        <text class="chapter-title">{{ chapterTitle || '加载中...' }}</text>
       </view>
       <view class="header-right" @tap="showSettings = true">
         <text class="icon">⚙</text>
@@ -16,7 +16,10 @@
     <!-- 阅读内容区域 -->
     <view class="reader-content" @tap="toggleHeader">
       <view class="content-wrapper" :style="contentStyle">
-        <text class="content-text" :style="textStyle">{{ currentPageContent }}</text>
+        <view v-if="loading" class="loading-content">
+          <text class="loading-text">加载中...</text>
+        </view>
+        <text v-else class="content-text" :style="textStyle">{{ currentPageContent || '暂无内容' }}</text>
       </view>
       
       <!-- 翻页提示 -->
@@ -32,9 +35,17 @@
         <text class="page-info">{{ currentPage }}/{{ totalPages }}</text>
       </view>
       <view class="footer-actions">
-        <button class="action-btn" @click="prevPage" :disabled="currentPage <= 1">上一页</button>
-        <button class="action-btn" @click="nextPage" :disabled="currentPage >= totalPages">下一页</button>
-        <button class="action-btn ad-btn" @click="watchAd">观看广告</button>
+        <button class="action-btn" @click="prevPage" :disabled="currentPage <= 1">
+          <text v-if="currentPage <= 1" class="btn-text disabled">上一页</text>
+          <text v-else class="btn-text">上一页</text>
+        </button>
+        <button class="action-btn" @click="nextPage" :disabled="currentPage >= totalPages">
+          <text v-if="currentPage >= totalPages" class="btn-text disabled">下一页</text>
+          <text v-else class="btn-text">下一页</text>
+        </button>
+        <button class="action-btn ad-btn" @click="watchAd">
+          <text class="btn-text">观看广告</text>
+        </button>
       </view>
     </view>
     
@@ -114,6 +125,7 @@ export default {
       showTrialLimit: false,
       showSettings: false,
       showPageHint: false,
+      loading: false,
       rewardVideoAd: null,
       fontSize: 32,
       lineHeight: 1.8,
@@ -177,20 +189,24 @@ export default {
       }
     },
     async loadChapter() {
+      this.loading = true
       try {
         const res = await request.get(`/chapter/${this.chapterId}/content`, {
           params: { page: this.currentPage }
         })
-        this.chapterTitle = res.data.title
-        this.currentPageContent = res.data.content
-        this.currentPage = res.data.currentPage
-        this.totalPages = res.data.totalPages
+        this.chapterTitle = res.data.title || ''
+        this.currentPageContent = res.data.content || ''
+        this.currentPage = res.data.currentPage || 1
+        this.totalPages = res.data.totalPages || 1
         this.showTrialLimit = false
       } catch (error) {
         uni.showToast({
           title: '加载失败',
           icon: 'none'
         })
+        this.currentPageContent = '加载失败，请重试'
+      } finally {
+        this.loading = false
       }
     },
     prevPage() {
@@ -417,6 +433,19 @@ export default {
   word-wrap: break-word;
   word-break: break-all;
   text-align: justify;
+  letter-spacing: 1rpx;
+}
+
+.loading-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
 }
 
 .page-hint {
@@ -467,6 +496,14 @@ export default {
 
 .action-btn:disabled {
   opacity: 0.5;
+}
+
+.btn-text {
+  font-size: 28rpx;
+}
+
+.btn-text.disabled {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .ad-btn {

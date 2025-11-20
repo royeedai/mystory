@@ -8,6 +8,7 @@ export const authApi = {
 // 小说相关
 export const novelApi = {
   getList: (params) => request.get('/admin/novel/list', { params }),
+  getDetail: (id) => request.get(`/admin/novel/${id}`),
   create: (data) => request.post('/admin/novel', data),
   update: (id, data) => request.put(`/admin/novel/${id}`, data),
   delete: (id) => request.delete(`/admin/novel/${id}`),

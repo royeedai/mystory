@@ -44,6 +44,27 @@ public class AdminNovelController {
     }
     
     /**
+     * 获取小说详情（后台）
+     */
+    @GetMapping("/{id}")
+    public Result<NovelVO> getNovelDetail(@PathVariable Long id) {
+        try {
+            Long currentUserId = SecurityUtil.getCurrentUserId();
+            String currentUserRole = SecurityUtil.getCurrentUserRole();
+            NovelVO novel = novelService.getNovelById(id);
+            
+            // 作者只能查看自己的小说
+            if ("AUTHOR".equals(currentUserRole) && !novel.getAuthorId().equals(currentUserId)) {
+                return Result.error("无权访问该小说");
+            }
+            
+            return Result.success(novel);
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
+    }
+    
+    /**
      * 创建小说
      */
     @PostMapping

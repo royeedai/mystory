@@ -24,6 +24,8 @@
 /workspace/novel-api/src/main/java/com/novel/dto/NovelDTO.java
 /workspace/novel-api/src/main/java/com/novel/entity/SysUser.java
 /workspace/novel-api/src/main/java/com/novel/controller/NovelController.java
+/workspace/novel-api/src/main/java/com/novel/config/Md5PasswordEncoder.java
+/workspace/novel-api/src/main/java/com/novel/util/Md5Util.java
 /workspace/novel-api/src/main/java/com/novel/common/Result.java
 /workspace/novel-api/src/main/java/com/novel/entity/AppUser.java
 /workspace/novel-api/src/main/java/com/novel/vo/NovelVO.java

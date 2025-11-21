@@ -1,4 +1,5 @@
 com/novel/vo/ChapterListVO.class
+com/novel/config/Md5PasswordEncoder.class
 com/novel/service/AdRewardService.class
 com/novel/entity/Chapter.class
 com/novel/entity/Novel.class
@@ -14,6 +15,7 @@ com/novel/mapper/ChapterMapper.class
 com/novel/vo/NovelVO.class
 com/novel/controller/admin/AdminChapterController.class
 com/novel/service/AuthService.class
+com/novel/util/Md5Util.class
 com/novel/vo/ReadingRecordVO.class
 com/novel/common/WxApiUtil.class
 com/novel/vo/AppUserVO.class

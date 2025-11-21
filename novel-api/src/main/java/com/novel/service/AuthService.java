@@ -12,7 +12,7 @@ import com.novel.mapper.AppUserMapper;
 import com.novel.mapper.SysUserMapper;
 import com.novel.vo.LoginVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.novel.util.Md5Util;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -25,7 +25,6 @@ public class AuthService {
     private final AppUserMapper appUserMapper;
     private final JwtUtil jwtUtil;
     private final WxApiUtil wxApiUtil;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
     /**
      * 后台用户登录
@@ -36,7 +35,7 @@ public class AuthService {
                 .eq(SysUser::getUsername, loginDTO.getUsername())
         );
         
-        if (user == null || !passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
+        if (user == null || !Md5Util.matches(loginDTO.getPassword(), user.getPassword())) {
             throw new RuntimeException("用户名或密码错误");
         }
         

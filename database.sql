@@ -4,7 +4,7 @@
 CREATE TABLE `sys_user` (
   `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
   `username` VARCHAR(50) UNIQUE NOT NULL COMMENT '用户名',
-  `password` VARCHAR(255) NOT NULL COMMENT '密码（BCrypt加密）',
+  `password` VARCHAR(255) NOT NULL COMMENT '密码（MD5加密）',
   `nickname` VARCHAR(50) COMMENT '昵称',
   `role` VARCHAR(20) NOT NULL DEFAULT 'AUTHOR' COMMENT '角色：AUTHOR-作者，ADMIN-管理员',
   `status` TINYINT DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
@@ -86,10 +86,10 @@ CREATE TABLE `ad_watch_record` (
 -- 插入测试数据
 -- 管理员账号：admin / admin123
 INSERT INTO `sys_user` (`username`, `password`, `nickname`, `role`, `status`) VALUES
-('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iwK8pJwC', '管理员', 'ADMIN', 1);
--- 密码：admin123 (BCrypt加密后的值，实际使用时需要重新生成)
+('admin', '0192023a7bbd73250516f069df18b500', '管理员', 'ADMIN', 1);
+-- 密码：admin123 (MD5加密后的值)
 
 -- 作者账号：author1 / author123
 INSERT INTO `sys_user` (`username`, `password`, `nickname`, `role`, `status`) VALUES
-('author1', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iwK8pJwC', '作者1', 'AUTHOR', 1);
--- 密码：author123 (BCrypt加密后的值，实际使用时需要重新生成)
+('author1', 'e22591bbe1941fcc4b78972d4c60281f', '作者1', 'AUTHOR', 1);
+-- 密码：author123 (MD5加密后的值)
